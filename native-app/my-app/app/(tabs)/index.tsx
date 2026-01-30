@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Dimensions, Linking, TouchableOpacity } from 'react-native';
+import { WebView } from 'react-native-webview';
+import { Camera } from 'expo-camera';
 
 const { width, height } = Dimensions.get('window');
 
