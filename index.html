@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QuasarAI - Browser Logic</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
+    <style>
+        body { margin: 0; background: #121212; overflow: hidden; }
+        #cursor {
+    width: 25px;
+    height: 25px;
+    background: red;
+    border-radius: 50%;
+    position: fixed; /* 'absolute' ki jagah 'fixed' use karein */
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    pointer-events: none;
+    transform: translate(-50%, -50%); /* Center point handle karne ke liye */
+}
+        #webcam { transform: scaleX(-1); position: fixed; bottom: 10px; right: 10px; width: 200px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <video id="webcam"></video>
+
+    <script>
+        const video = document.getElementById('webcam');
+        const cursor = document.getElementById('cursor');
+        
+        // Connect to FastAPI WebSocket
+        // index.html mein ye change karein
+const socket = new WebSocket('ws://localhost:8000/ws');
+
+socket.onopen = () => {
+    console.log("WebSocket Connected to Backend!");
+};
+
+socket.onerror = (error) => {
+    console.error("WebSocket Error: ", error);
+};
+
+        const faceMesh = new FaceMesh({locateFile: (file) => {
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+        }});
+
+        faceMesh.setOptions({
+            maxNumFaces: 1,
+            refineLandmarks: true,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+
+        faceMesh.onResults(onResults);
+
+        let blinkCounter = 0; // Blink duration track karne ke liye
+
+function onResults(results) {
+    if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+        const landmarks = results.multiFaceLandmarks[0];
+        
+        // 1. Blink Detection Logic
+        // Landmark 159: Top eyelid, Landmark 145: Bottom eyelid
+        const topId = landmarks[159];
+        const bottomId = landmarks[145];
+        
+        // Vertical distance calculate karna
+        const eyeDistance = Math.abs(topId.y - bottomId.y);
+
+        let currentAction = "move";
+
+        // Threshold check (0.015 usually works well for most webcams)
+        if (eyeDistance < 0.015) {
+            blinkCounter++;
+            // Agar aankh 5 frames se zyada band hai, toh click trigger karein
+            if (blinkCounter === 5) { 
+                currentAction = "click";
+                console.log("Action Triggered: Click");
+            }
+        } else {
+            blinkCounter = 0;
+            currentAction = "move";
+        }
+
+        // 2. Cursor Positioning (Nose Tip)
+        const nose = landmarks[1];
+
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({
+                x: nose.x,
+                y: nose.y,
+                action: currentAction // Naya action field
+            }));
+        }
+    } else {
+        console.log("Face not found");
+    }
+}
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.status === "success") {
+                // Move cursor based on smoothed backend data
+                const screenX = data.x * window.innerWidth;
+                const screenY = data.y * window.innerHeight;
+                cursor.style.left = `${screenX}px`;
+                cursor.style.top = `${screenY}px`;
+            }
+        };
+
+        const camera = new Camera(video, {
+            onFrame: async () => {
+                await faceMesh.send({image: video});
+            },
+            width: 640,
+            height: 480
+        });
+        camera.start();
+    </script>
+</body>
+</html>
