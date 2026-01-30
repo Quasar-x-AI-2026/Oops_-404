@@ -14,6 +14,28 @@ export default function EyeTrackingScreen() {
   const [cursorPos, setCursorPos] = useState({ x: width / 2, y: height / 2 });
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
+  
+  const [layoutMap, setLayoutMap] = useState<{ [key: string]: { x: number, y: number, w: number, h: number } }>({});
+  const [homeColor, setHomeColor] = useState('#6366f1');
+
+  // Function to save button coordinates automatically
+  const saveLayout = (id: string, event: any) => {
+    const { x, y, width, height } = event.nativeEvent.layout;
+    setLayoutMap(prev => ({ ...prev, [id]: { x, y, w: width, h: height } }));
+  };
+
+  // Logic to check if the cursor is currently over a button
+  const isHovered = (id: string) => {
+    const layout = layoutMap[id];
+    if (!layout) return false;
+    const gridYOffset = (height * 0.12) + 30; // Offset for the top header
+    return (
+      cursorPos.x >= layout.x &&
+      cursorPos.x <= layout.x + layout.w &&
+      cursorPos.y >= layout.y + gridYOffset &&
+      cursorPos.y <= layout.y + gridYOffset + layout.h
+    );
+  };
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
