@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pyautogui
+python-multipart
+opencv-python
+mediapipe
+numpy
+websockets
