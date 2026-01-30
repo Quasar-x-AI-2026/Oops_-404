@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QuasarAI - Browser Logic</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
+    <style>
+        body { margin: 0; background: #121212; overflow: hidden; }
+        #cursor {
+            width: 25px;
+            height: 25px;
+            background: red;
+            border-radius: 50%;
+            position: fixed; 
+            top: 0;
+            left: 0;
+            z-index: 10000;
+            pointer-events: none;
+            transform: translate(-50%, -50%); 
+        }
+        #webcam { transform: scaleX(-1); position: fixed; bottom: 10px; right: 10px; width: 200px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div id="cursor"></div>
+    <video id="webcam"></video>
+</body>
+</html>
