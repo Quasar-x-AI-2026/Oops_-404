@@ -12,6 +12,24 @@ export default function EyeTrackingScreen() {
   const [mode, setMode] = useState<'SELECT' | 'PC' | 'MOBILE'>('SELECT');
   const [activeView, setActiveView] = useState<'MAIN' | 'MESSAGING' | 'CALLS' | 'CAMERA' | 'AI_MODE'>('MAIN');
   const [cursorPos, setCursorPos] = useState({ x: width / 2, y: height / 2 });
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === 'granted');
+    })();
+  }, []);
+
+  const handleMessage = (event: any) => {
+    try {
+      const data = JSON.parse(event.nativeEvent.data);
+      if (data.x !== undefined && data.y !== undefined) {
+        setCursorPos({ x: data.x * width, y: data.y * height });
+      }
+    } catch (e) { console.log("Data Error:", e); }
+  };
+  
 
   if(mode === 'SELECT'){
     return(
