@@ -54,4 +54,11 @@ const styles = StyleSheet.create({
   title: { fontSize: 22, fontWeight: '700', color: '#ffffff', textAlign: 'center', marginBottom: 20 },
   modeBtn: { paddingVertical: 14, borderRadius: 14, marginBottom: 14, alignItems: 'center' },
   btnText: { color: '#ffffff', fontSize: 16, fontWeight: '600' },
+  webViewLayer: { flex: 1, backgroundColor: 'transparent', position: 'absolute', width: width, height: height, zIndex: 5 },
+  nativeCursor: {
+    position: 'absolute',
+    width: 35, height: 35, borderRadius: 50,
+    backgroundColor: 'rgba(255,0,0,0.9)', borderWidth: 3, borderColor: '#fff',
+    zIndex: 9999, pointerEvents: 'none', transform: [{ translateX: -17.5 }, { translateY: -17.5 }],
+  },
 });
