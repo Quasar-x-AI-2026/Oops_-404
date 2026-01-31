@@ -1,13 +1,12 @@
-import { useState } from 'react'
-import './App.css'
+import { Routes, Route } from "react-router-dom";
+import Home from "./Home.jsx";
+import FaceCursor from "./FaceCursor.jsx";
 
-function App() {
-
+export default function App() {
   return (
-    <>
-    Home
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/face-cursor" element={<FaceCursor />} />
+    </Routes>
+  );
 }
-
-export default App
