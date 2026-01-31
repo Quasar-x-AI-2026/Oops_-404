@@ -1,0 +1,25 @@
+.animated-gradient-text {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* REMOVED: overflow: hidden */
+  /* REMOVED: backdrop-filter */
+  overflow: visible; 
+  background: transparent !important; /* Forces background away */
+}
+
+.text-content {
+  display: inline-block;
+  position: relative;
+  z-index: 2;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  line-height: 1; /* Prevents extra spacing on huge fonts */
+}
+
+/* Hide the overlay completely just in case */
+.gradient-overlay {
+  display: none !important;
+}
