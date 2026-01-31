@@ -1,5 +1,8 @@
-import React from 'react'
-import Orb from './Design/Orb'
+import React from "react";
+import Orb from "./Design/Orb.jsx";
+import GradientText from "./Design/GradientText.jsx";
+import StaggeredMenu from "./Design/StaggeredMenu.jsx";
+
 const Home = () => {
      const menuItems = [
         { label: "Home", ariaLabel: "Go to home page", link: "/" },
@@ -34,6 +37,19 @@ const Home = () => {
           onMenuOpen={() => console.log('Menu opened')}
           onMenuClose={() => console.log('Menu closed')}
         />
+        <GradientText
+          colors={["#06b6d4", "#ffffff", "#22d3ee"]}
+          animationSpeed={6}
+          showBorder={false}
+          className="roboto-condensed font-bold tracking-widest uppercase"
+          style={{
+            fontSize: "clamp(3rem, 10vw, 8rem)",
+            lineHeight: 1,
+            textAlign: "center"
+          }}
+        >
+          Third Eye
+        </GradientText>
       </div>
     </div>
   )
